@@ -1,0 +1,129 @@
+{% extends 'parsing/index.html' %}
+
+{% load static %}
+
+{% load filename %}
+
+{% block title %}Drag and Drop Upload{% endblock %}
+
+{% block javascript %}
+  {# JQUERY FILE UPLOAD SCRIPTS #}
+  <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
+
+  {# PHOTOS PAGE SCRIPTS #}
+  <script src="{% static 'js/jquery-file-upload/progress-bar-upload.js' %}"></script>
+
+  {# CUSTOM SCRIPT #}
+  <script src="{% static 'js/parsing/file_download.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row file-upload-row">
+  <div class="col-md-3">
+      <div class="well text-muted text-center">
+      <span class="glyphicon glyphicon-arrow-down"></span>
+      <h3>Перетягніть файли сюди</h3>
+    </div>
+<!--    <button type="button" class="btn btn-info upload-files">-->
+<!--      <span class="glyphicon glyphicon-cloud-upload"></span> Додати файли <i class="fas fa-file-import"></i>-->
+<!--    </button>-->
+    <div class="btn-group upload-files" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-info upload-button">
+            <span class="glyphicon glyphicon-cloud-upload"></span> Додати файли <i class="fas fa-file-import"></i>
+        </button>
+        <button type="button" class="btn btn-success parse-button">
+            </span> Розпочати обробку <i class="fas fa-hourglass-start"></i>
+        </button>
+    </div>
+    <input id="fileupload" type="file" name="file" multiple
+           style="display: none;"
+           data-url="{% url 'parsing:upload' %}"
+           data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+  </div>
+
+  <div class="col-md-9">
+<!--    <table id="gallery" class="table table-bordered">-->
+<!--    <thead>-->
+<!--      <tr>-->
+<!--        <th>Завантажені файли</th>-->
+<!--        <th>Завантажено</th>-->
+<!--      </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--      {% for file in files %}-->
+<!--        <tr>-->
+<!--          <td><a href="{{ file.file.url }}">{{ file | getfilename }}</a></td>-->
+<!--          <td>{{ file.uploaded_at }}</td>-->
+<!--        </tr>-->
+<!--      {% endfor %}-->
+<!--    </tbody>-->
+<!--  </table>-->
+    <table id="file-list" data-toggle="table"
+                data-sortable="true"
+                data-sort-name="uploaded_at"
+                data-sort-order="desc"
+                data-search="true"
+                data-show-refresh="true"
+                data-show-toggle="true"
+                data-on="true"
+                data-show-columns="true"
+                data-pagination="true"
+                data-side-pagination="client"
+                data-row-attributes="rowAttributes"
+                data-page-size="15"
+
+                class="text-sm">
+
+                <thead>
+                  <tr>
+                    <th data-field="id">ID</th>
+                    <th data-field="uploaded_at" data-sortable="true">Завантажено</th>
+                    <th data-field="file" data-sortable="true">Файл</th>
+                    <th data-field="status" data-sortable="true">Статус</th>
+                    <th data-field="uploaded_by" data-sortable="true">Завантажив</th>
+                    <th data-field="operator" data-sortable="true">Оператор</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for file in files %}
+                        <tr>
+                            <td data-field="id">{{ file.pk }}</td>
+                            <td data-field="uploaded_at">{{ file.uploaded_at|date:"d.m.Y" }}, {{ file.uploaded_at|time:"H:i:s" }}</td>
+                            <td data-field="file" data-visible="false"><a href="{{ file.file.url }}">{{ file | getfilename }}</a></td>
+                            <td data-field="status">{{ file.get_status_display }}<div></div></td>
+<!--                            <td hidden class="" data-field="status"><div class="loader"></div></td>-->
+                            <td data-field="uploaded_by">{{ file.uploaded_by }}</td>
+                            <td data-field="operator">{{ file.operator }}</td>                            
+                        </tr>
+                        <script>
+                          function rowAttributes(row, index) {
+                            return {
+                              'data-id': row.id,
+                            }
+                          }
+                        </script>                    
+                    {% endfor %}
+                </tbody>
+            </table>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-progress" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Завантаження...</h4>
+        </div>
+        <div class="modal-body">
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+

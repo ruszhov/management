@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+  <div class="container">
+    <div class="card-deck">
+    <div class="card card-first">
+      <div class="card-body">
+        <a href="http://192.168.3.71:8000"><div class="wrapper-inner-tab-backgrounds-first"><div class="sim-button button13"><span>Цех</span></div></div></a>
+      </div>
+    </div>
+    <div class="card card-second">
+      <div class="card-body">
+        <a href="{% url 'parsing:upload' %}"><div class="wrapper-inner-tab-backgrounds-second"><div class="sim-button button13"><span>Менеджмент</span></div></div></a>
+      </div>
+    </div>
+    <div class="card card-third">
+      <div class="card-body">
+        <a href="http://192.168.3.70:9000"><div class="wrapper-inner-tab-backgrounds-third"><div class="sim-button button13"><span>Рахунки</span></div></div></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
